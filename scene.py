@@ -13,10 +13,10 @@ import urllib.request
 
 LAT, LON, TZ = 34.34, 108.94, "Asia/Shanghai"  # 西安
 
-PINK = "#FF6B81"
-PINK_LIGHT = "#FFC7DB"
-PINK_DEEP = "#E24A7A"
-PINK_FAINT = "#FFD9E8"
+PINK = "#F4795B"
+PINK_LIGHT = "#FBC7B3"
+PINK_DEEP = "#E2542F"
+PINK_FAINT = "#FFD9A0"
 
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 

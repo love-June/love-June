@@ -32,7 +32,7 @@
 <!-- ============ Stats ============ -->
 <div align="center">
 
-<img height="170em" src="https://streak-stats.demolab.com/?user=love-June&hide_border=true&background=00000000&ring=FF6B81&fire=FF6B81&currStreakLabel=FF6B81&sideLabels=8b949e&dates=8b949e&currStreakNum=c9d1d9&sideNums=c9d1d9" />
+<img height="170em" src="https://streak-stats.demolab.com/?user=love-June&hide_border=true&background=00000000&ring=F4795B&fire=F4795B&currStreakLabel=F4795B&sideLabels=555555&dates=AAAAAA&currStreakNum=333333&sideNums=333333" />
 
 </div>
 
@@ -50,6 +50,6 @@
     <img src="garden-footer.svg" width="900" alt="garden footer" />
   </picture>
 
-![Profile Views](https://komarev.com/ghpvc/?username=love-June&label=Profile%20views&color=FF6B81&style=flat)
+![Profile Views](https://komarev.com/ghpvc/?username=love-June&label=Profile%20views&color=F4795B&style=flat)
 
 </div>
