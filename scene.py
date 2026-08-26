@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fan 的粉色天气同步天空生成器（西安）。
+"""Fan 的橘色天气同步天空生成器（西安）。
 
-用 open-meteo（免费、无需 key）取西安当前天气，再生成两个粉色 SVG：
+用 open-meteo（免费、无需 key）取西安当前天气，生成精致的橘色天空 SVG：
   - sky.svg       白天版（浅色主题显示）
   - sky-night.svg 夜间版（深色主题显示）
-在 GitHub Actions 里每 3 小时跑一次并提交，即可让天空跟着真实天气变。
+在 GitHub Actions 里每 3 小时跑一次并提交，天空就会跟着西安真实天气变。
 """
 
 import json
@@ -13,11 +13,17 @@ import urllib.request
 
 LAT, LON, TZ = 34.34, 108.94, "Asia/Shanghai"  # 西安
 
-PINK = "#F4795B"
-PINK_LIGHT = "#FBC7B3"
-PINK_DEEP = "#E2542F"
-PINK_FAINT = "#FFD9A0"
+# 橘色调色板（与横幅/页脚一致）
+MAIN = "#F4795B"
+DEEP = "#E2542F"
+PEACH = "#ED8B66"
+LIGHT = "#FBC7B3"
+SUN_CORE = "#FFD9A0"
+SUN_GLOW = "#FFC069"
+NIGHT_BG = "#2C3E63"
+NIGHT_STAR = "#FFE9CF"
 
+FONT = "Segoe UI, Ubuntu, Helvetica, Arial, sans-serif"
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -55,39 +61,82 @@ def scene(code):
     return "clear"
 
 
-def header():
+def svg_open():
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 70" '
-        'width="900" height="70" '
-        'font-family="Segoe UI, Ubuntu, Helvetica, Arial, sans-serif">\n'
-        "<title>sky</title>\n"
+        'width="900" height="70" font-family="%s">\n<title>sky</title>\n' % FONT
     )
 
 
-def bg(opacity):
-    return (
-        '<rect width="900" height="70" '
-        f'fill="{PINK}" opacity="{opacity}"/>\n'
+def defs(night):
+    d = "<defs>\n"
+    if night:
+        d += (
+            '<linearGradient id="skybg" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{NIGHT_BG}" stop-opacity="0.28"/>'
+            f'<stop offset="1" stop-color="{MAIN}" stop-opacity="0.05"/>'
+            "</linearGradient>"
+        )
+    else:
+        d += (
+            '<linearGradient id="skybg" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0" stop-color="{LIGHT}" stop-opacity="0.25"/>'
+            f'<stop offset="1" stop-color="{MAIN}" stop-opacity="0.05"/>'
+            "</linearGradient>"
+        )
+    d += (
+        '<radialGradient id="glow">'
+        f'<stop offset="0" stop-color="{SUN_CORE}" stop-opacity="0.9"/>'
+        f'<stop offset="1" stop-color="{SUN_GLOW}" stop-opacity="0"/>'
+        "</radialGradient>"
+        '<linearGradient id="cloudg" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.8"/>'
+        f'<stop offset="1" stop-color="{LIGHT}" stop-opacity="0.2"/>'
+        "</linearGradient>"
+        '<linearGradient id="clouddark" x1="0" y1="0" x2="0" y2="1">'
+        f'<stop offset="0" stop-color="{DEEP}" stop-opacity="0.9"/>'
+        f'<stop offset="1" stop-color="{PEACH}" stop-opacity="0.35"/>'
+        "</linearGradient>"
     )
+    d += "</defs>\n"
+    return d
 
 
-def sun(x=770, y=34):
+def bg():
+    return '<rect width="900" height="70" fill="url(#skybg)"/>\n'
+
+
+def sun(x=782, y=34):
+    rays = "".join(
+        f'<path d="M0 -22 L1.7 -31 L-1.7 -31 Z" fill="{SUN_GLOW}" '
+        f'transform="rotate({a})"/>'
+        for a in range(0, 360, 45)
+    )
     return (
         f'<g transform="translate({x},{y})">'
-        f'<circle r="20" fill="{PINK}" opacity="0.16">'
-        '<animate attributeName="opacity" values="0.10;0.28;0.10" '
-        'dur="6s" repeatCount="indefinite"/></circle>'
-        f'<circle r="12" fill="{PINK}"/>'
-        f'<circle r="5.5" fill="{PINK_LIGHT}" opacity="0.8"/>'
+        '<circle r="34" fill="url(#glow)">'
+        '<animate attributeName="opacity" values="0.7;1;0.7" dur="6s" '
+        'repeatCount="indefinite"/></circle>'
+        f'<g opacity="0.5"><animateTransform attributeName="transform" '
+        'type="rotate" from="0" to="360" dur="90s" repeatCount="indefinite"/>'
+        f'{rays}</g>'
+        f'<circle r="13" fill="{SUN_CORE}"/>'
+        '<circle r="6" fill="#FFFFFF" opacity="0.7"/>'
         "</g>\n"
     )
 
 
-def moon(x=770, y=30):
+def moon(x=782, y=30):
     return (
         f'<g transform="translate({x},{y})">'
-        f'<circle r="12" fill="{PINK_LIGHT}"/>'
-        f'<circle r="11" cx="-5" cy="-3" fill="{PINK_DEEP}"/>'
+        '<circle r="30" fill="url(#glow)">'
+        '<animate attributeName="opacity" values="0.6;1;0.6" dur="7s" '
+        'repeatCount="indefinite"/></circle>'
+        f'<circle r="12" fill="{LIGHT}"/>'
+        f'<circle r="12" cy="-3" fill="{NIGHT_BG}" opacity="0.18"/>'
+        f'<circle cx="4" cy="5" r="2.2" fill="{PEACH}" opacity="0.55"/>'
+        f'<circle cx="-4" cy="-5" r="1.5" fill="{PEACH}" opacity="0.5"/>'
+        f'<circle cx="5" cy="-4" r="1.1" fill="{PEACH}" opacity="0.45"/>'
         "</g>\n"
     )
 
@@ -95,112 +144,156 @@ def moon(x=770, y=30):
 def stars(night):
     if not night:
         return ""
-    s = ""
-    for i, (cx, cy, r, d) in enumerate(
-        [(80, 18, 1.3, 3.1), (150, 42, 1.0, 4.4), (240, 14, 1.2, 2.6),
-         (360, 48, 1.1, 3.8), (540, 12, 1.3, 4.1), (680, 44, 1.0, 2.9)]
-    ):
-        s += (
-            f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{PINK_LIGHT}">'
-            f'<animate attributeName="opacity" values="0.1;0.9;0.1" dur="{d}s" '
-            f'begin="{i * 0.5}s" repeatCount="indefinite"/></circle>'
+    out = ""
+    pts = [
+        (70, 16, 1.6, 3.2, 0.0), (130, 40, 1.1, 4.6, 0.5), (210, 12, 1.5, 2.8, 1.0),
+        (320, 46, 1.2, 3.9, 1.5), (430, 14, 1.7, 4.2, 2.0), (560, 42, 1.1, 3.0, 2.5),
+        (650, 15, 1.4, 4.8, 3.0), (740, 48, 1.0, 3.5, 3.5), (860, 12, 1.3, 3.1, 4.0),
+    ]
+    for cx, cy, r, dur, begin in pts:
+        out += (
+            f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{NIGHT_STAR}">'
+            f'<animate attributeName="opacity" values="0.15;0.95;0.15" dur="{dur}s" '
+            f'begin="{begin}s" repeatCount="indefinite"/></circle>'
         )
-    return s + "\n"
+    for cx, cy, dur in [(180, 30, 4.0), (500, 18, 5.2), (700, 30, 4.6)]:
+        out += (
+            f'<g transform="translate({cx},{cy})" fill="{NIGHT_STAR}">'
+            f'<path d="M0 -5 L1 -1 L5 0 L1 1 L0 5 L-1 1 L-5 0 L-1 -1 Z">'
+            f'<animate attributeName="opacity" values="0;0.9;0" dur="{dur}s" '
+            f'repeatCount="indefinite"/></path></g>'
+        )
+    out += (
+        '<g opacity="0">'
+        '<animate attributeName="opacity" values="0;0.9;0.9;0" keyTimes="0;0.08;0.5;0.6" '
+        'dur="12s" begin="3s" repeatCount="indefinite"/>'
+        '<line x1="0" y1="0" x2="-28" y2="14" stroke="#FFFFFF" stroke-width="1.4" '
+        'stroke-linecap="round">'
+        '<animateMotion dur="12s" begin="3s" repeatCount="indefinite" '
+        'path="M820 4 L680 40"/></line></g>'
+    )
+    return out + "\n"
 
 
-def cloud(x, y, s=1.0):
+def cloud(x, y, s=1.0, dark=False):
+    fill = "url(#clouddark)" if dark else "url(#cloudg)"
     return (
-        f'<g transform="translate({x},{y}) scale({s})" fill="{PINK}">'
-        f'<g opacity="0.75">'
-        f'<ellipse cx="-34" cy="0" rx="26" ry="13"/>'
-        f'<ellipse cx="0" cy="-9" rx="30" ry="16"/>'
-        f'<ellipse cx="34" cy="0" rx="26" ry="13"/>'
-        f'<rect x="-34" y="0" width="68" height="13" rx="6.5"/>'
-        "</g>"
+        f'<g transform="translate({x},{y}) scale({s})">'
+        '<g>'
         '<animateTransform attributeName="transform" type="translate" '
-        'values="0 0; 12 0; 0 0" dur="11s" repeatCount="indefinite"/>'
-        "</g>\n"
+        'values="0 0; 13 0; 0 0" dur="13s" repeatCount="indefinite"/>'
+        f'<ellipse cx="-38" cy="2" rx="28" ry="14" fill="{fill}"/>'
+        f'<ellipse cx="0" cy="-9" rx="34" ry="18" fill="{fill}"/>'
+        f'<ellipse cx="38" cy="2" rx="28" ry="14" fill="{fill}"/>'
+        f'<rect x="-38" y="2" width="76" height="14" rx="7" fill="{fill}"/>'
+        "</g></g>\n"
     )
 
 
 def rain():
-    lines = ""
-    for i, (x, d) in enumerate(
-        [(70, 0.0), (170, 0.6), (270, 0.2), (370, 0.8), (470, 0.4),
-         (570, 0.9), (670, 0.1), (770, 0.5)]
-    ):
-        lines += (
-            f'<line x1="{x}" y1="10" x2="{x}" y2="26" stroke="{PINK}" '
-            'stroke-width="2" stroke-linecap="round" opacity="0.65">'
-            f'<animate attributeName="opacity" values="0.1;0.8;0.1" dur="1.2s" '
-            f'begin="{d}s" repeatCount="indefinite"/></line>'
+    drops = ""
+    for x, delay in [
+        (60, 0.0), (150, 0.3), (240, 0.6), (330, 0.1), (420, 0.7),
+        (510, 0.4), (600, 0.9), (690, 0.2), (780, 0.5), (870, 0.8),
+    ]:
+        drops += (
+            f'<line x1="{x}" y1="14" x2="{x - 6}" y2="34" stroke="{MAIN}" '
+            'stroke-width="2" stroke-linecap="round">'
+            f'<animate attributeName="opacity" values="0.1;0.85;0.1" dur="1.1s" '
+            f'begin="{delay}s" repeatCount="indefinite"/></line>'
         )
-    return lines + "\n"
+    splashes = "".join(
+        f'<circle cx="{x}" cy="46" r="1.4" fill="{LIGHT}">'
+        f'<animate attributeName="opacity" values="0;0.7;0" dur="1.4s" '
+        f'begin="{delay}s" repeatCount="indefinite"/></circle>'
+        for x, delay in [(100, 0.2), (280, 0.5), (460, 0.8), (640, 0.1), (820, 0.6)]
+    )
+    return drops + splashes + "\n"
 
 
 def snow():
     out = ""
-    for i, (x, cy, d) in enumerate(
-        [(90, 20, 0.0), (200, 32, 0.5), (310, 18, 0.2), (420, 30, 0.8),
-         (530, 20, 0.4), (640, 34, 0.9), (750, 18, 0.1)]
-    ):
+    for x, cy, r, dur, begin in [
+        (80, 22, 2.8, 3.0, 0.0), (180, 34, 2.1, 3.6, 0.5), (290, 18, 2.6, 2.8, 0.2),
+        (400, 30, 2.0, 3.9, 0.8), (510, 20, 2.7, 3.2, 0.4), (620, 36, 2.2, 3.5, 0.9),
+        (730, 19, 2.5, 2.9, 0.1), (840, 32, 2.0, 3.8, 0.6),
+    ]:
         out += (
-            f'<circle cx="{x}" cy="{cy}" r="2.6" fill="{PINK_LIGHT}">'
-            f'<animate attributeName="cy" values="{cy - 6};{cy + 8};{cy - 6}" '
-            f'dur="3.2s" begin="{d}s" repeatCount="indefinite"/>'
-            f'<animate attributeName="opacity" values="0.2;0.9;0.2" dur="3.2s" '
-            f'begin="{d}s" repeatCount="indefinite"/></circle>'
+            f'<circle cx="{x}" cy="{cy}" r="{r}" fill="{LIGHT}">'
+            f'<animate attributeName="cy" values="{cy - 4};{cy + 14};{cy - 4}" '
+            f'dur="{dur}s" begin="{begin}s" repeatCount="indefinite"/>'
+            f'<animate attributeName="opacity" values="0.2;0.95;0.2" dur="{dur}s" '
+            f'begin="{begin}s" repeatCount="indefinite"/></circle>'
         )
     return out + "\n"
 
 
 def fog():
     return (
-        f'<g fill="{PINK}" opacity="0.35">'
-        '<ellipse cx="230" cy="26" rx="150" ry="9"/>'
-        '<ellipse cx="560" cy="44" rx="180" ry="10"/>'
+        '<g fill="#FFFFFF" opacity="0.22">'
+        '<ellipse cx="180" cy="20" rx="150" ry="9"/>'
+        '<ellipse cx="520" cy="38" rx="200" ry="11"/>'
+        '<ellipse cx="760" cy="24" rx="130" ry="8"/>'
         '<animateTransform attributeName="transform" type="translate" '
-        'values="0 0; 20 0; 0 0" dur="14s" repeatCount="indefinite"/>'
+        'values="0 0; 22 0; 0 0" dur="15s" repeatCount="indefinite"/>'
         "</g>\n"
     )
 
 
-def storm():
+def lightning(x, y):
     return (
-        cloud(300, 30, 1.2)
-        + cloud(600, 28, 1.0)
-        + (
-            f'<g transform="translate(452,40)">'
-            f'<path d="M0 0 L-7 16 L0 16 L-5 30 L8 11 L1 11 L7 0 Z" '
-            f'fill="{PINK}">'
-            '<animate attributeName="opacity" values="0;1;0;1;0" '
-            'keyTimes="0;0.15;0.4;0.6;1" dur="3.5s" repeatCount="indefinite"/>'
-            "</path></g>\n"
-        )
+        f'<g transform="translate({x},{y})">'
+        f'<path d="M0 0 L-8 18 L0 18 L-6 34 L10 10 L2 10 L9 0 Z" '
+        f'fill="{SUN_CORE}">'
+        '<animate attributeName="opacity" values="0;1;0;1;0" '
+        'keyTimes="0;0.12;0.3;0.45;1" dur="3.2s" repeatCount="indefinite"/>'
+        "</path></g>\n"
+    )
+
+
+def storm():
+    return cloud(280, 26, 1.25, dark=True) + cloud(640, 24, 1.05, dark=True) \
+        + lightning(460, 34) + lightning(700, 32) + rain()
+
+
+def birds():
+    head = (
+        '<g stroke="%s" stroke-width="1.6" fill="none" stroke-linecap="round" '
+        'opacity="0.55">' % DEEP
+    )
+    return (
+        head
+        + '<g><path d="M0 0 Q5 -5 10 0 Q15 -5 20 0"/>'
+        + '<animateMotion dur="20s" begin="1s" repeatCount="indefinite" '
+        + 'path="M120 22 L860 12"/></g>'
+        + '<g><path d="M0 0 Q4 -4 8 0 Q12 -4 16 0"/>'
+        + '<animateMotion dur="24s" begin="5s" repeatCount="indefinite" '
+        + 'path="M80 34 L820 24"/></g>'
+        + "</g>\n"
     )
 
 
 def build_sky(scene_name, night):
-    out = header()
-    out += bg(0.06 if not night else 0.10)
+    out = svg_open() + defs(night) + bg()
     if night:
-        out += moon()
-        out += stars(True)
+        out += moon() + stars(True)
     else:
         out += sun()
 
     if scene_name == "clear":
-        pass
+        if not night:
+            out += cloud(360, 20, 0.8) + cloud(600, 12, 0.6) + birds()
     elif scene_name == "clouds":
-        out += cloud(300, 34, 1.1) + cloud(620, 40, 0.9)
+        out += cloud(300, 34, 1.15) + cloud(620, 40, 0.95) + cloud(130, 18, 0.7)
     elif scene_name == "rain":
-        out += cloud(300, 24, 1.1) + cloud(620, 20, 0.9) + rain()
+        out += cloud(300, 22, 1.2, dark=True) + cloud(640, 18, 1.0, dark=True) + rain()
     elif scene_name == "snow":
-        out += cloud(300, 22, 1.1) + snow()
+        out += cloud(300, 22, 1.15) + snow()
     elif scene_name == "fog":
         out += fog()
     elif scene_name == "storm":
         out += storm()
+
     out += "</svg>\n"
     return out
 
@@ -208,12 +301,10 @@ def build_sky(scene_name, night):
 def main():
     weather = fetch_weather()
     sc = scene(weather["code"])
-    day = build_sky(sc, night=False)
-    night = build_sky(sc, night=True)
     with open(os.path.join(OUT_DIR, "sky.svg"), "w", encoding="utf-8") as f:
-        f.write(day)
+        f.write(build_sky(sc, night=False))
     with open(os.path.join(OUT_DIR, "sky-night.svg"), "w", encoding="utf-8") as f:
-        f.write(night)
+        f.write(build_sky(sc, night=True))
     print(f"scene={sc} code={weather['code']} temp={weather['temp']} is_day={weather['is_day']}")
 
 
