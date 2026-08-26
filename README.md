@@ -17,13 +17,36 @@
 <!-- ============ Tech Garden ============ -->
 <div align="center">
 
-<img src="chips/label-0.svg" alt="CORE" /> <img src="chips/cpp.svg" alt="C++" /> <img src="chips/cmake.svg" alt="CMake" /> <img src="chips/linux.svg" alt="Linux" /> <img src="chips/git.svg" alt="Git" />
+<b>🌸 CORE</b>
 <br/>
-<img src="chips/label-1.svg" alt="STORAGE" /> <img src="chips/rocksdb.svg" alt="RocksDB" /> <img src="chips/storage-engine.svg" alt="Storage Engine" /> <img src="chips/mvcc.svg" alt="MVCC" /> <img src="chips/btree.svg" alt="B+ Tree" /> <img src="chips/lsm.svg" alt="LSM-Tree" />
+<img src="https://img.shields.io/badge/C%2B%2B-F4795B?style=for-the-badge&logo=cplusplus&logoColor=white" alt="C++" />
+<img src="https://img.shields.io/badge/CMake-F4795B?style=for-the-badge&logo=cmake&logoColor=white" alt="CMake" />
+<img src="https://img.shields.io/badge/Linux-F4795B?style=for-the-badge&logo=linux&logoColor=white" alt="Linux" />
+<img src="https://img.shields.io/badge/Git-F4795B?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
+
+<br/><br/>
+<b>🌾 STORAGE</b>
 <br/>
-<img src="chips/label-2.svg" alt="DISTRIBUTED" /> <img src="chips/distributed.svg" alt="Distributed Systems" /> <img src="chips/grpc.svg" alt="gRPC" /> <img src="chips/mysql.svg" alt="MySQL" /> <img src="chips/redis.svg" alt="Redis" />
+<img src="https://img.shields.io/badge/RocksDB-F4795B?style=for-the-badge" alt="RocksDB" />
+<img src="https://img.shields.io/badge/Storage_Engine-F4795B?style=for-the-badge" alt="Storage Engine" />
+<img src="https://img.shields.io/badge/MVCC-F4795B?style=for-the-badge" alt="MVCC" />
+<img src="https://img.shields.io/badge/B%2B_Tree-F4795B?style=for-the-badge" alt="B+ Tree" />
+<img src="https://img.shields.io/badge/LSM_Tree-F4795B?style=for-the-badge" alt="LSM-Tree" />
+
+<br/><br/>
+<b>🕸 DISTRIBUTED</b>
 <br/>
-<img src="chips/label-3.svg" alt="PROJECTS" /> <img src="chips/threadpool.svg" alt="Cpp-ThreadPool" /> <img src="chips/asynclog.svg" alt="Cpp-AsyncLog" /> <img src="chips/muduo.svg" alt="MuduoChatServer" />
+<img src="https://img.shields.io/badge/Distributed_Systems-F4795B?style=for-the-badge" alt="Distributed Systems" />
+<img src="https://img.shields.io/badge/gRPC-F4795B?style=for-the-badge&logo=grpc&logoColor=white" alt="gRPC" />
+<img src="https://img.shields.io/badge/MySQL-F4795B?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+<img src="https://img.shields.io/badge/Redis-F4795B?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" />
+
+<br/><br/>
+<b>📦 PROJECTS</b>
+<br/>
+<img src="https://img.shields.io/badge/Cpp_ThreadPool-F4795B?style=for-the-badge" alt="Cpp-ThreadPool" />
+<img src="https://img.shields.io/badge/Cpp_AsyncLog-F4795B?style=for-the-badge" alt="Cpp-AsyncLog" />
+<img src="https://img.shields.io/badge/MuduoChatServer-F4795B?style=for-the-badge" alt="MuduoChatServer" />
 
 </div>
 
