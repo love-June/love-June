@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="137" height="22" viewBox="0 0 137 22">
+  <rect x="0.5" y="0.5" width="136" height="21" rx="10.5" fill="#FF6B81" fill-opacity="0.07" stroke="#FF6B81" stroke-width="1.3"/>
+  <circle cx="12" cy="11" r="3.4" fill="#FF6B81"/>
+  <text x="22" y="15.5" font-family="Segoe UI, Ubuntu, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#FF6B81">MuduoChatServer</text>
+</svg>
