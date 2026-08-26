@@ -55,7 +55,7 @@
 <!-- ============ Stats ============ -->
 <div align="center">
 
-<img height="170em" src="https://streak-stats.demolab.com/?user=love-June&hide_border=true&background=00000000&ring=F4795B&fire=F4795B&currStreakLabel=F4795B&sideLabels=555555&dates=AAAAAA&currStreakNum=333333&sideNums=333333" />
+<img src="https://github-readme-stats.vercel.app/api?username=love-June&show_icons=true&theme=rose_pine&hide_border=true&bg_color=1a1a2e&title_color=F4795B&icon_color=FBC7B3&text_color=c9d1d9&count_private=true" />
 
 </div>
 
