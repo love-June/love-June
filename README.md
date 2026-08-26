@@ -55,7 +55,8 @@
 <!-- ============ Stats ============ -->
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=love-June&show_icons=true&theme=rose_pine&hide_border=true&bg_color=1a1a2e&title_color=F4795B&icon_color=FBC7B3&text_color=c9d1d9&count_private=true" />
+<img src="https://img.shields.io/github/followers/love-June?label=Followers&style=for-the-badge&color=F4795B&logo=github&logoColor=white" alt="Followers" />
+<img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fusers%2Flove-June&query=%24.public_repos&label=Public%20Repos&style=for-the-badge&color=F4795B&logo=github&logoColor=white" alt="Public Repos" />
 
 </div>
 
